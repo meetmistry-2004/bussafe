@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "431847980421",
+    "project_id": "bussafe-8f06b",
+    "storage_bucket": "bussafe-8f06b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:431847980421:android:1329d984079984217e98ec",
+        "android_client_info": {
+          "package_name": "com.example.bussafe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbu56-fLMX7cHJKfCi9Il-XrT4kDkzw2E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
