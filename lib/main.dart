@@ -43,9 +43,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text(
-          "Welcome to BusTracking App",
-          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        child: FittedBox(
+          fit: BoxFit.cover,
+          child: Image.asset(
+            'assets/images/logo.jpeg',
+          ),
         ),
       ),
     );
