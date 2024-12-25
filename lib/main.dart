@@ -45,7 +45,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: FittedBox(
           fit: BoxFit.cover,
-          child: Image.asset(),
+          child: Image.asset(
+            'assets/images/logo.jpeg',
+          ),
         ),
       ),
     );
