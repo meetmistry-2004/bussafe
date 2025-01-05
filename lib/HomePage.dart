@@ -1,7 +1,7 @@
+import 'package:bussafe/map_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -14,7 +14,19 @@ class _HomePageState extends State<HomePage> {
         title: Text('Home'),
       ),
       body: Center(
-        child:Text('Welcome'),
+        child: Column(
+          children: [
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MapPage()),
+                );
+              },
+              child: Text('map'),
+            )
+          ],
+        ),
       ),
     );
   }
