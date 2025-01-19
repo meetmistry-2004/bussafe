@@ -12,6 +12,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuthService _authService = FirebaseAuthService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,44 +28,50 @@ class _SignUpPageState extends State<SignUpPage> {
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20))),
+                labelText: 'Email',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
             ),
-            SizedBox(
-              height: 16,
-            ),
+            SizedBox(height: 16),
             TextField(
               controller: _passwordController,
+              obscureText: true, // Secure password field
               decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20))),
+                labelText: 'Password',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
             ),
-            SizedBox(
-              height: 16,
-            ),
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
+                // Validate inputs
+                if (_emailController.text.isEmpty ||
+                    _passwordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text('Email and password cannot be empty.')),
+                  );
+                  return;
+                }
                 try {
-                  await _authService.registerWithAndPassword(
-                      _emailController.text, _passwordController.text, context);
+                  await _authService.registerWithEmailAndPassword(
+                    _emailController.text,
+                    _passwordController.text,
+                    context,
+                  );
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => LoginPage()),
                   );
-                } on FirebaseAuthException catch (e) {
-                  String errorMessage = 'SignUp Failed';
-                  if (e.code == 'weak-password') {
-                    errorMessage = 'The password provided is too weak';
-                  } else if (e.code == 'email-already-in-use') {
-                    errorMessage = 'The account already exists fr that emali';
-                  }
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(errorMessage)),
-                  );
                 } catch (e) {
-                  print('An unexpected error occured:$e');
+                  print('An unexpected error occurred: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('An unexpected error occurred.')),
+                  );
                 }
               },
               child: Text('Sign Up'),
@@ -78,20 +85,21 @@ class _SignUpPageState extends State<SignUpPage> {
 
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  Future<void> registerWithAndPassword(
+
+  Future<void> registerWithEmailAndPassword(
       String email, String password, BuildContext context) async {
     try {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('SignUp successful')),
+        SnackBar(content: Text('Sign Up successful')),
       );
     } on FirebaseAuthException catch (e) {
-      String errorMessage = 'SignUp failed';
+      String errorMessage = 'Sign Up failed.';
       if (e.code == 'weak-password') {
         errorMessage = 'The password provided is too weak.';
       } else if (e.code == 'email-already-in-use') {
-        errorMessage = 'The account already exists fr that email.';
+        errorMessage = 'The account already exists for that email.';
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(errorMessage)),
@@ -112,7 +120,7 @@ class FirebaseAuthService {
       if (e.code == 'user-not-found') {
         errorMessage = 'No user found for that email.';
       } else if (e.code == 'wrong-password') {
-        errorMessage = 'Incorrect password';
+        errorMessage = 'Incorrect password.';
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(errorMessage)),
@@ -127,8 +135,10 @@ class FirebaseAuthService {
         context,
         MaterialPageRoute(builder: (context) => LoginPage()),
       );
-    } on FirebaseAuthException catch (e) {
-      print('Error signing out:${e.code}');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error signing out. Please try again.')),
+      );
     }
   }
 

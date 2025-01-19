@@ -1,7 +1,6 @@
-import 'package:bussafe/LoginPage.dart';
+import 'package:bussafe/firstpage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'firebase_options.dart';
 
 void main() async {
@@ -34,23 +33,26 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
-    Future.delayed(Duration(seconds: 5), () {
-      Navigator.pushAndRemoveUntil(
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(Duration(seconds: 5), () {
+        Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-          (route) => false);
+          MaterialPageRoute(builder: (context) => firstpage()),
+          (route) => false,
+        );
+      });
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Center(
-        child: FittedBox(
+        child: Image.asset(
+          'assets/images/logo.jpeg',
           fit: BoxFit.cover,
-          child: Image.asset(
-            'assets/images/logo.jpeg',
-          ),
         ),
       ),
     );

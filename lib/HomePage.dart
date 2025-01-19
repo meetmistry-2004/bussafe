@@ -15,16 +15,22 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextButton(
+            Text(
+              "Welcome to the Home Page!",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => MapPage()),
                 );
               },
-              child: Text('map'),
-            )
+              child: Text('Go to Map'),
+            ),
           ],
         ),
       ),

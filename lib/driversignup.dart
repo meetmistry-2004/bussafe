@@ -1,14 +1,15 @@
-import 'package:bussafe/HomePage.dart';
-import 'package:bussafe/SignUP.dart';
-import 'package:flutter/material.dart';
+import 'package:bussafe/driverloginpage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:bussafe/HomePage.dart';
+import 'package:bussafe/LoginPage.dart';
 
-class LoginPage extends StatefulWidget {
+class Driversignup extends StatefulWidget {
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<Driversignup> createState() => _DriversignupState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _DriversignupState extends State<Driversignup> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuthService _authService = FirebaseAuthService();
@@ -17,10 +18,11 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Sign Up'),
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -36,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              obscureText: true,
+              obscureText: true, // Secure password field
               decoration: InputDecoration(
                 labelText: 'Password',
                 border: OutlineInputBorder(
@@ -47,53 +49,37 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
+                // Validate inputs
                 if (_emailController.text.isEmpty ||
                     _passwordController.text.isEmpty) {
-                  _showErrorDialog(
-                      context, 'Email and password cannot be empty.');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text('Email and password cannot be empty.')),
+                  );
                   return;
                 }
-                await _authService.loginWithEmailAndPassword(
-                  _emailController.text,
-                  _passwordController.text,
-                  context,
-                );
+                try {
+                  await _authService.registerWithEmailAndPassword(
+                    _emailController.text,
+                    _passwordController.text,
+                    context,
+                  );
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => Driverloginpage()),
+                  );
+                } catch (e) {
+                  print('An unexpected error occurred: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('An unexpected error occurred.')),
+                  );
+                }
               },
-              child: Text('Login'),
-            ),
-            SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignUpPage()),
-                );
-              },
-              child: Text('Don’t have an account? Sign up'),
+              child: Text('Sign Up'),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  void _showErrorDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
     );
   }
 }
@@ -107,10 +93,10 @@ class FirebaseAuthService {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration successful')),
+        SnackBar(content: Text('Sign Up successful')),
       );
     } on FirebaseAuthException catch (e) {
-      String errorMessage = 'Registration failed.';
+      String errorMessage = 'Sign Up failed.';
       if (e.code == 'weak-password') {
         errorMessage = 'The password provided is too weak.';
       } else if (e.code == 'email-already-in-use') {
@@ -126,7 +112,7 @@ class FirebaseAuthService {
       String email, String password, BuildContext context) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
       );
@@ -148,11 +134,11 @@ class FirebaseAuthService {
       await _auth.signOut();
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
+        MaterialPageRoute(builder: (context) => Driverloginpage()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error signing out: ${e.toString()}')),
+        SnackBar(content: Text('Error signing out. Please try again.')),
       );
     }
   }

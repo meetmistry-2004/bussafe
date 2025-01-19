@@ -1,14 +1,14 @@
 import 'package:bussafe/HomePage.dart';
-import 'package:bussafe/SignUP.dart';
+import 'package:bussafe/driversignup.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginPage extends StatefulWidget {
+class Driverloginpage extends StatefulWidget {
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<Driverloginpage> createState() => _DriverloginpageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _DriverloginpageState extends State<Driverloginpage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuthService _authService = FirebaseAuthService();
@@ -17,10 +17,10 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('Driver Login'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 24),
             ElevatedButton(
               onPressed: () async {
                 if (_emailController.text.isEmpty ||
@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SignUpPage()),
+                  MaterialPageRoute(builder: (context) => Driversignup()),
                 );
               },
               child: Text('Don’t have an account? Sign up'),
@@ -101,27 +101,6 @@ class _LoginPageState extends State<LoginPage> {
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<void> registerWithEmailAndPassword(
-      String email, String password, BuildContext context) async {
-    try {
-      await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration successful')),
-      );
-    } on FirebaseAuthException catch (e) {
-      String errorMessage = 'Registration failed.';
-      if (e.code == 'weak-password') {
-        errorMessage = 'The password provided is too weak.';
-      } else if (e.code == 'email-already-in-use') {
-        errorMessage = 'The account already exists for that email.';
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
-    }
-  }
-
   Future<void> loginWithEmailAndPassword(
       String email, String password, BuildContext context) async {
     try {
@@ -141,23 +120,5 @@ class FirebaseAuthService {
         SnackBar(content: Text(errorMessage)),
       );
     }
-  }
-
-  Future<void> signOut(BuildContext context) async {
-    try {
-      await _auth.signOut();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error signing out: ${e.toString()}')),
-      );
-    }
-  }
-
-  bool isUserLoggedIn() {
-    return _auth.currentUser != null;
   }
 }
